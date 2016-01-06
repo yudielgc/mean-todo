@@ -1,3 +1,3 @@
 # meanTODO
 
-MEAN Spa that simulates a TODO feature
+SPA developed with a MEAN stack that simulates a TODO feature
