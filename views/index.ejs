@@ -1,11 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html ng-app="app">
   <head>
     <title><%= title %></title>
     <link rel='stylesheet' href='/stylesheets/style.css' />
   </head>
   <body>
     <h1><%= title %></h1>
-    <p>Welcome to <%= title %></p>
+
+    <ng-view></ng-view>
+
+    <!-- Libraries -->
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-route.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular-resource.min.js"></script>
+
+    <!-- Template -->
+    <script type="text/ng-template" id="/todos.html">
+      Search: <input type="text" ng-model="search.name">
+      <ul>
+        <li ng-repeat="todo in todos | filter: search">
+          <input type="checkbox" ng-model="todo.completed">
+          <a href="#/{{$index}}">{{todo.name}}</a>
+        </li>
+      </ul>
+    </script>
+
+    <script type="text/ng-template" id="/todoDetails.html">
+      <h1>{{ todo.name }}</h1>
+      completed: <input type="checkbox" ng-model="todo.completed">
+      note: <textarea>{{ todo.note }}</textarea>
+    </script>
+
+    <script>
+      angular.module('app', ['ngRoute', 'ngResource'])
+
+        //---------------
+        // Services
+        //---------------
+
+        .factory('Todos', ['$resource', function($resource) {
+			return $resource('/todos/:id', null, {
+				'update': { method: 'PUT' }
+          	});
+        }])
+
+        //---------------
+        // Controllers
+        //---------------
+
+        .controller('TodoController', ['$scope', 'Todos', function ($scope, Todos) {
+        	$scope.todos = Todos.query();
+        	/*Todos.success(function (data) {
+        		$scope.todos = data;
+        	}).error(function (data, status) {
+        		console.log(data, status);
+        		$scope.todos = [];
+        	});*/
+        }])
+
+        .controller('TodoDetailCtrl', ['$scope', '$routeParams', 'Todos', function ($scope, $routeParams, Todos) {
+        	$scope.todo = Todos[$routeParams.id];
+        }])
+
+        //---------------
+        // Routes
+        //---------------
+
+        .config(['$routeProvider', function ($routeProvider) {
+          $routeProvider
+            .when('/', {
+              templateUrl: '/todos.html',
+              controller: 'TodoController'
+            })
+
+            .when('/:id', {
+              templateUrl: '/todoDetails.html',
+              controller: 'TodoDetailCtrl'
+           });
+        }]);
+    </script>
   </body>
 </html>
