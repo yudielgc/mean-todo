@@ -1,4 +1,4 @@
-(function () {
+(function (angular) {
     'use strict';
 
     angular.module('app', ['ngRoute', 'ngResource'])
@@ -11,4 +11,4 @@
             $scope.todo = Todos[$routeParams.id];
         }]);
 
-})();
+})(angular);
