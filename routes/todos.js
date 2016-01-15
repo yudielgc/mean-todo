@@ -17,9 +17,9 @@
 
     /* GET /todos/id */
     router.get('/:id', function(req, res, next) {
-      Todo.findById(req.params.id, function (err, post) {
+      Todo.findById(req.params.id, function (err, todo) {
         if (err) return next(err);
-        res.json(post);
+        res.json(todo);
       });
     });
 
@@ -33,8 +33,10 @@
 
     /*  PUT /todos/:id */
     router.put('/:id', function (req, res, next) {
+        console.log('req.body', req.body);
         Todo.findByIdAndUpdate(req.params.id, req.body, function (err, post) {
             if (err) return next(err);
+            //var kakita = req.body;
             res.json(post);
         });
     });
